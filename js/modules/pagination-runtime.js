@@ -464,6 +464,10 @@ function addPage() {
         clearCanvasPixels.call(this);
         snapshotInheritedBackgroundForNewPage.call(this, this.currentPage);
         this.restorePageScene?.(this.currentPage);
+        // A brand-new page has an empty tool snapshot; swapping clears the
+        // outgoing page's overlays so they cannot be serialized into the new
+        // page's snapshot on the next switch (loadPage does the same).
+        this.teachingToolsManager?.restorePageState?.(this.currentPage);
         this.historyManager.reset?.();
         this.historyManager.saveState();
         touchPageSnapshot.call(this, this.currentPage);
@@ -502,6 +506,7 @@ function nextPage() {
             this.pages.push(null);
             snapshotInheritedBackgroundForNewPage.call(this, this.currentPage);
             this.restorePageScene?.(this.currentPage);
+            this.teachingToolsManager?.restorePageState?.(this.currentPage);
             this.historyManager.reset?.();
             this.historyManager.saveState();
             touchPageSnapshot.call(this, this.currentPage);
@@ -530,6 +535,7 @@ function nextOrAddPage() {
             clearCanvasPixels.call(this);
             snapshotInheritedBackgroundForNewPage.call(this, this.currentPage);
             this.restorePageScene?.(this.currentPage);
+            this.teachingToolsManager?.restorePageState?.(this.currentPage);
             this.historyManager.reset?.();
             this.historyManager.saveState();
             touchPageSnapshot.call(this, this.currentPage);

@@ -359,6 +359,10 @@ function buildSyncSnapshot() {
             }
             this.savePageBackground(this.currentPage);
             this.saveCurrentPageScene?.(this.currentPage);
+            // Capture the current page's live tools into the page map first:
+            // without a page switch the map still holds the last switch's
+            // snapshot and a moved/added/removed tool would be lost on refresh.
+            this.teachingToolsManager?.saveCurrentPageState?.(this.currentPage);
             const currentPageScene = this.getPageScene?.(this.currentPage, { serializable: true }) || null;
             const backgroundImageData = this.backgroundManager.backgroundImageData;
 
@@ -480,6 +484,9 @@ async function saveSession() {
         try {
             saveSessionSnapshotSync.call(this);
             this.saveCurrentPageScene?.(this.currentPage);
+            // Same capture as buildSyncSnapshot: the persistent record must
+            // carry the live tools even when the sync snapshot write failed.
+            this.teachingToolsManager?.saveCurrentPageState?.(this.currentPage);
             this.enforcePageBitmapMemoryBudget?.();
 
             const pageSnapshots = Array.isArray(this.pages) ? [...this.pages] : [];

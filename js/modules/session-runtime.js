@@ -187,12 +187,14 @@ function mergeRecoverySettings(persistedSettings, snapshotSettings) {
                 snapshot.pageBackgrounds
             );
         }
-        // Teaching tool snapshots: the sync snapshot is the newer capture, so
-        // it wins per board; a board missing from one side keeps the other.
+        // Teaching tool snapshots: the sync snapshot carries the complete page
+        // map, so it wins as a whole — same policy as mergeRecoveryPageBackgrounds.
+        // A union would resurrect tools that a newer snapshot intentionally
+        // cleared (e.g. after a project import reset) from the older record.
         const persistedToolStates = persisted.pageTeachingTools;
         const snapshotToolStates = snapshot.pageTeachingTools;
         if (snapshotToolStates && typeof snapshotToolStates === 'object') {
-            merged.pageTeachingTools = { ...persistedToolStates, ...snapshotToolStates };
+            merged.pageTeachingTools = snapshotToolStates;
         } else if (persistedToolStates && typeof persistedToolStates === 'object') {
             merged.pageTeachingTools = persistedToolStates;
         }
@@ -605,6 +607,10 @@ async function restoreSession() {
                     );
                     sessionData.settings.pageScenes = trimPageIndexedState(
                         sessionData.settings.pageScenes,
+                        syncSnapshotPageCount
+                    );
+                    sessionData.settings.pageTeachingTools = trimPageIndexedState(
+                        sessionData.settings.pageTeachingTools,
                         syncSnapshotPageCount
                     );
                 }
