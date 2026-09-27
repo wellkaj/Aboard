@@ -114,28 +114,32 @@ function createFakeIndexedDbFactory() {
     objectStoreNames: { contains: () => true },
     createObjectStore() {},
     transaction() {
-      return {
-        objectStore() {
-          return {
-            get(key) {
-              const request = {};
-              queueMicrotask(() => {
-                request.result = store.has(key) ? JSON.parse(JSON.stringify(store.get(key))) : undefined;
-                if (request.onsuccess) request.onsuccess({ target: request });
-              });
-              return request;
-            },
-            put(value, key) {
-              const request = {};
-              queueMicrotask(() => {
-                store.set(key, JSON.parse(JSON.stringify(value)));
-                if (request.onsuccess) request.onsuccess({ target: request });
-              });
-              return request;
-            }
-          };
+      // Real IndexedDB fires oncomplete/onabort on the transaction; the
+      // manager treats commit (not request success) as a durable write.
+      const transaction = {};
+      const objectStore = {
+        get(key) {
+          const request = {};
+          queueMicrotask(() => {
+            request.result = store.has(key) ? JSON.parse(JSON.stringify(store.get(key))) : undefined;
+            if (request.onsuccess) request.onsuccess({ target: request });
+          });
+          return request;
+        },
+        put(value, key) {
+          const request = {};
+          queueMicrotask(() => {
+            store.set(key, JSON.parse(JSON.stringify(value)));
+            if (request.onsuccess) request.onsuccess({ target: request });
+            queueMicrotask(() => {
+              if (transaction.oncomplete) transaction.oncomplete({ target: transaction });
+            });
+          });
+          return request;
         }
       };
+      transaction.objectStore = () => objectStore;
+      return transaction;
     }
   };
   const factory = {

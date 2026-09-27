@@ -77,22 +77,40 @@ export class GifManager {
       return Promise.reject(new Error('GIF storage database unavailable'));
     }
     return new Promise((resolve, reject) => {
-      let store;
-      try {
-        store = db.transaction(GIF_STATE_STORE, mode).objectStore(GIF_STATE_STORE);
-      } catch (error) {
-        reject(error);
-        return;
-      }
+      let transaction;
       let request;
       try {
-        request = run(store);
+        transaction = db.transaction(GIF_STATE_STORE, mode);
+        request = run(transaction.objectStore(GIF_STATE_STORE));
       } catch (error) {
         reject(error);
         return;
       }
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error || new Error('IndexedDB request failed'));
+      let settled = false;
+      const settle = (ok, value) => {
+        if (settled) return;
+        settled = true;
+        if (ok) {
+          resolve(value);
+        } else {
+          reject(value || new Error('IndexedDB transaction failed'));
+        }
+      };
+      // Storage quota failures abort the transaction at COMMIT time — after
+      // the put request's onsuccess has already fired. Resolving on request
+      // success would report failed saves as successful and permanently mute
+      // the quota notice, so readwrite results only count once the
+      // transaction completes. Readonly results are final at request success.
+      if (mode === 'readwrite') {
+        transaction.oncomplete = () => settle(true, request.result);
+        transaction.onabort = () => settle(false, transaction.error);
+        transaction.onerror = () => settle(false, transaction.error);
+        request.onerror = () => settle(false, request.error);
+      } else {
+        request.onsuccess = () => settle(true, request.result);
+        request.onerror = () => settle(false, request.error);
+        transaction.onabort = () => settle(false, transaction.error);
+      }
     });
   }
 
@@ -113,20 +131,32 @@ export class GifManager {
     } catch (error) {
       legacyState = null;
     }
-    try {
-      storage.removeItem(GIF_LEGACY_STORAGE_KEY);
-    } catch (error) {
-      // Removal is best-effort; the IndexedDB copy is authoritative now.
+    const dropLegacyKey = () => {
+      try {
+        storage.removeItem(GIF_LEGACY_STORAGE_KEY);
+      } catch (error) {
+        // Removal is best-effort; the IndexedDB copy is authoritative now.
+      }
+    };
+    if (!Array.isArray(legacyState) || legacyState.length === 0) {
+      dropLegacyKey();
+      return;
     }
-    if (!Array.isArray(legacyState) || legacyState.length === 0) return;
 
     const existing = await this.withGifStateStore(
       'readonly',
       (store) => store.get(GIF_STATE_KEY)
     ).catch(() => undefined);
-    if (Array.isArray(existing) && existing.length > 0) return;
+    if (Array.isArray(existing) && existing.length > 0) {
+      dropLegacyKey();
+      return;
+    }
 
     await this.withGifStateStore('readwrite', (store) => store.put(legacyState, GIF_STATE_KEY));
+    // Only drop the legacy key once the IndexedDB copy has committed: a
+    // failed write must leave the source intact so the localStorage fallback
+    // path still restores the gifs and the migration retries next startup.
+    dropLegacyKey();
   }
 
   async loadStateFromIndexedDb() {
@@ -168,19 +198,20 @@ export class GifManager {
   }
 
   buildStateSnapshot() {
+    // Unset inline styles parse to NaN (width/height stay empty until libgif
+    // loads); persist 0 instead so storage never carries NaN coordinates.
+    const toFiniteInt = (value) => {
+      const parsed = parseInt(value, 10);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
     const state = [];
     this.gifs.forEach((data) => {
-      const left = parseInt(data.container.style.left, 10);
-      const top = parseInt(data.container.style.top, 10);
-      const width = parseInt(data.container.style.width, 10);
-      const height = parseInt(data.container.style.height, 10);
-
       state.push({
         src: data.src,
-        x: left,
-        y: top,
-        width,
-        height,
+        x: toFiniteInt(data.container.style.left),
+        y: toFiniteInt(data.container.style.top),
+        width: toFiniteInt(data.container.style.width),
+        height: toFiniteInt(data.container.style.height),
         loopCount: data.loopCount,
         autoPlay: data.isPlaying
       });
@@ -670,6 +701,11 @@ export class GifManager {
       console.warn('Failed to stop GIF instance:', e);
     }
 
+    // End any drag/resize still holding document-level listeners, otherwise
+    // the gesture survives the container it belongs to.
+    data.container._endGifGesture?.();
+    data.container._endGifResize?.();
+
     data.container.remove();
     this.gifs.delete(id);
     this.saveState();
@@ -692,17 +728,33 @@ export class GifManager {
         ? e.target.closest.bind(e.target)
         : () => null;
       if (closest('.gif-controls') || closest('.gif-resize-handle')) return;
+      // Secondary mouse buttons (context menu, middle-click autoscroll) must
+      // not start drags.
+      if (e.button !== undefined && e.button !== 0) return;
       isDragging = true;
       activePointerId = e.pointerId;
       startX = e.clientX;
       startY = e.clientY;
       startLeft = parseInt(element.style.left, 10) || 0;
       startTop = parseInt(element.style.top, 10) || 0;
+      // Capture so a pointerup released outside the window still ends the
+      // gesture instead of leaving a sticky drag behind.
+      try {
+        element.setPointerCapture?.(e.pointerId);
+      } catch (error) {
+        // Capture is a safety net; drags still work without it.
+      }
       e.preventDefault();
     };
 
     const onMove = (e) => {
       if (!isDragging || e.pointerId !== activePointerId) return;
+      // Belt-and-suspenders for a lost pointerup: a move with no button held
+      // must end the gesture rather than drag with nothing pressed.
+      if (e.buttons === 0) {
+        onUp(e);
+        return;
+      }
       element.style.left = `${startLeft + (e.clientX - startX)}px`;
       element.style.top = `${startTop + (e.clientY - startY)}px`;
     };
@@ -710,8 +762,17 @@ export class GifManager {
     const onUp = (e) => {
       if (!isDragging) return;
       if (e && e.pointerId !== undefined && e.pointerId !== activePointerId) return;
+      const pointerId = activePointerId;
       isDragging = false;
       activePointerId = null;
+      element._endGifGesture = null;
+      try {
+        if (pointerId !== null && pointerId !== undefined) {
+          element.releasePointerCapture?.(pointerId);
+        }
+      } catch (error) {
+        // The capture may already be gone (pointerup implies release).
+      }
       this.saveState();
       this.doc.removeEventListener('pointermove', onMove);
       this.doc.removeEventListener('pointerup', onUp);
@@ -721,6 +782,7 @@ export class GifManager {
     element.addEventListener('pointerdown', (e) => {
       onDown(e);
       if (isDragging) {
+        element._endGifGesture = onUp;
         this.doc.addEventListener('pointermove', onMove);
         this.doc.addEventListener('pointerup', onUp);
         this.doc.addEventListener('pointercancel', onUp);
@@ -741,17 +803,27 @@ export class GifManager {
 
     const onDown = (e) => {
       e.stopPropagation();
+      if (e.button !== undefined && e.button !== 0) return;
       isResizing = true;
       activePointerId = e.pointerId;
       startX = e.clientX;
       startY = e.clientY;
       startWidth = element.offsetWidth;
       startHeight = element.offsetHeight;
+      try {
+        handle.setPointerCapture?.(e.pointerId);
+      } catch (error) {
+        // Capture is a safety net; resizes still work without it.
+      }
       e.preventDefault();
     };
 
     const onMove = (e) => {
       if (!isResizing || e.pointerId !== activePointerId) return;
+      if (e.buttons === 0) {
+        onUp(e);
+        return;
+      }
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       let newWidth = startWidth + dx;
@@ -773,8 +845,17 @@ export class GifManager {
     const onUp = (e) => {
       if (!isResizing) return;
       if (e && e.pointerId !== undefined && e.pointerId !== activePointerId) return;
+      const pointerId = activePointerId;
       isResizing = false;
       activePointerId = null;
+      element._endGifResize = null;
+      try {
+        if (pointerId !== null && pointerId !== undefined) {
+          handle.releasePointerCapture?.(pointerId);
+        }
+      } catch (error) {
+        // The capture may already be gone (pointerup implies release).
+      }
       this.saveState();
       this.doc.removeEventListener('pointermove', onMove);
       this.doc.removeEventListener('pointerup', onUp);
@@ -784,6 +865,7 @@ export class GifManager {
     handle.addEventListener('pointerdown', (e) => {
       onDown(e);
       if (isResizing) {
+        element._endGifResize = onUp;
         this.doc.addEventListener('pointermove', onMove);
         this.doc.addEventListener('pointerup', onUp);
         this.doc.addEventListener('pointercancel', onUp);
