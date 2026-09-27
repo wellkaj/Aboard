@@ -342,6 +342,9 @@ window.translations = {
         previous: 'Vorherige',
         next: 'Nächste',
         jumpPlaceholder: 'Seitenzahl eingeben',
+        deletePage: 'Aktuelle Seite löschen',
+        deletePageConfirmTitle: 'Seite löschen',
+        deletePageConfirm: 'Aktuelle Seite löschen? Dies kann nicht rückgängig gemacht werden.',
         of: ' / ',
         newPage: 'Neue Seite'
     },

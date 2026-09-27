@@ -8,7 +8,7 @@
 
 [![Demo](https://img.shields.io/badge/Demo-Online-22c55e?style=for-the-badge&labelColor=111827&logo=googlechrome&logoColor=fff)](https://aboard.pp.ua)
 <!-- version-badge:start -->
-[![Version](https://img.shields.io/badge/Version-2.5.5-f59e0b?style=for-the-badge&labelColor=111827)](version.txt)
+[![Version](https://img.shields.io/badge/Version-2.5.6-f59e0b?style=for-the-badge&labelColor=111827)](version.txt)
 <!-- version-badge:end -->
 [![License](https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge&labelColor=111827&logo=open-source-initiative&logoColor=fff)](LICENSE)
 [![PWA](https://img.shields.io/badge/PWA-Ready-8b5cf6?style=for-the-badge&labelColor=111827&logo=pwa&logoColor=fff)](manifest.json)
@@ -37,7 +37,7 @@
 ## 特色概览
 - 常用白板能力齐全：画笔、形状、橡皮、背景、插图、插字、选择编辑。
 - 课堂辅助功能完整：时间显示、计时器、随机点名、计分板、教具等。
-- 体验偏向真实教学场景：分页画布、自动保存恢复、PWA、多语言、配置导入导出。
+- 体验偏向真实教学场景：分页画布（可增可删）、自动保存恢复、PWA、多语言、配置导入导出。
 - 高倍率缩放时会自动切换到 SVG 矢量预览，让文字、图片、笔迹与形状在放大查看时更清晰。
 - 拖动对象时显示智能对齐参考线，自动吸附到其他对象与画布的边缘和中线；可在画布设置里关闭。
 - 默认缩放上限已提升到 `1000%`，需要更高倍率时仍可开启“允许无限放大”。

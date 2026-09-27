@@ -761,6 +761,25 @@ function setupEventListeners() {
         const pageInput = document.getElementById('page-input');
         bindIfPresent(document.getElementById('prev-page-btn'), 'click', () => this.prevPage());
         bindIfPresent(document.getElementById('next-or-add-page-btn'), 'click', () => this.nextOrAddPage());
+        bindIfPresent(document.getElementById('delete-page-btn'), 'click', async () => {
+            // Deleting is irreversible (page deletion never enters undo history,
+            // same as page creation), so confirm once with the page number.
+            const getPageText = (key, fallback) => {
+                const translated = window.i18n?.t?.(key);
+                return translated && translated !== key ? translated : fallback;
+            };
+            try {
+                const confirmResult = await window.appDialog?.showConfirm?.({
+                    title: getPageText('page.deletePageConfirmTitle', 'Delete Page'),
+                    message: getPageText('page.deletePageConfirm', 'Delete the current page? This cannot be undone.')
+                });
+                if (!confirmResult?.confirmed) return;
+            } catch (error) {
+                console.warn('Failed to show delete-page confirmation:', error);
+                return;
+            }
+            this.deletePage(this.currentPage);
+        });
         bindIfPresent(pageInput, 'change', (e) => this.goToPage(
             parseInt(e.target.value, 10),
             { allowCreate: false }

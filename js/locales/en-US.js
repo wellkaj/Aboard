@@ -360,6 +360,9 @@ window.translations = {
         previous: 'Previous Page',
         next: 'Next Page',
         jumpPlaceholder: 'Enter page number',
+        deletePage: 'Delete current page',
+        deletePageConfirmTitle: 'Delete Page',
+        deletePageConfirm: 'Delete the current page? This cannot be undone.',
         of: ' / ',
         newPage: 'New Page'
     },

@@ -360,6 +360,9 @@ window.translations = {
         previous: '上一页',
         next: '下一页',
         jumpPlaceholder: '输入页码跳转',
+        deletePage: '删除当前页',
+        deletePageConfirmTitle: '删除页面',
+        deletePageConfirm: '确定删除当前页吗？此操作不可撤销。',
         of: ' / ',
         newPage: '新建页面'
     },

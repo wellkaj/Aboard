@@ -1894,6 +1894,29 @@ class TeachingToolsManager {
         this.persistPageToolStates();
     }
 
+    // Page deletion renumbers later pages; tool snapshots must follow so a
+    // page keeps its tools at its new number and the deleted page's entry
+    // drops instead of haunting the same number.
+    shiftPageToolStatesAfterDeletion(deletedPageNumber) {
+        const deleted = Number(deletedPageNumber);
+        if (!Number.isInteger(deleted)) {
+            return;
+        }
+        const shifted = {};
+        Object.entries(this.pageToolStates || {}).forEach(([key, entries]) => {
+            const pageNumber = Number(key);
+            if (!Number.isInteger(pageNumber)) {
+                return;
+            }
+            if (pageNumber === deleted) {
+                return;
+            }
+            shifted[pageNumber > deleted ? pageNumber - 1 : pageNumber] = entries;
+        });
+        this.pageToolStates = shifted;
+        this.persistPageToolStates();
+    }
+
     // Clean up when destroyed
     destroy() {
         // Remove event listeners

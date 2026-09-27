@@ -1,6 +1,6 @@
 # 已知问题与审查归档
 
-最后核验：2026-09-12
+最后核验：2026-09-27
 
 ## 当前状态
 
@@ -12,8 +12,48 @@
 - 已覆盖 360x640 到 3840x2160 的响应式布局，但没有执行持续整节课时长的 300 页内存压力测试。
 - 多标签页自动保存冲突由 Web Locks 防护；不支持 Web Locks 的旧浏览器会退化为单标签使用假设，并在控制台记录兼容性信息。
 - 公告内容目前由 `js/features/announcement/announcement-manager.js` 内的本地化资源管理，不存在独立的远程公告配置源。
+- 删除页面不进撤销历史（与新建页面一致，分页操作均不可撤销）；删除前有一次确认弹窗。
+- GIF 悬浮层的 IndexedDB 状态没有跨标签页同步：A 标签删除 GIF 后，B 标签的下一次保存会按 last-write-wins 把它写回（旧 localStorage 路径同样没有同步，非回归）。
 
-发现新问题时，应先添加最小复现测试，再在本文件的“当前状态”下记录适用环境、复现步骤和影响范围。
+发现新问题时，应先添加最小复现测试，再在本文件的”当前状态”下记录适用环境、复现步骤和影响范围。
+
+## 2026-09-27 审计归档（跨页教具复核 + GIF 存储专项 + UI 静默失败）
+
+对 2026-09-12 轮引入的跨页教具持久化与 GIF IndexedDB 迁移做了复核审计，先写失败测试再修复 11 项缺陷，并新增删除页面功能。修复分三个提交落地，全部逐项确认未修复实现下测试为红，另以真实 Chromium 验证删除页全流程、撤销按钮状态刷新与教具跨页不泄漏。
+
+### 提交一：教具跨页持久化三缺陷（fix）
+
+| 范围 | 问题 | 回归测试 |
+| --- | --- | --- |
+| 新建页路径 | `addPage`/`nextPage`/`nextOrAddPage` 三条新建页路径都没调 `restorePageState`（只有 `goToPage`→`loadPage` 有）：旧页教具泄漏到新页 overlay 上，且下次翻页时被 `saveCurrentPageState` 固化进**新页**快照——一把直尺经”+ 新建页”再翻页后同时存在于两页。三条路径补齐换页调用 | `teaching-tools-page-persistence-regression.test.js` |
+| 会话快照 | `buildSyncSnapshot` 与 `saveSession` 只读 `exportPageToolStates()`（上次翻页的快照），从不捕获当前页 live 工具：拖动/新增/删除教具后不翻页直接刷新，改动回跳到上次翻页状态。两处保存前先 `saveCurrentPageState(currentPage)` | 同上 |
+| 恢复合并 | `mergeRecoverySettings` 对 `pageTeachingTools` 取并集，与 `pageBackgrounds` 的”snapshot 整体胜出”文档化策略相反：项目导入重置后（snapshot 携带空 map）若 IndexedDB 写入失败，下次启动旧教具从旧记录复活；且合并结果不做页数截断，孤儿页键会随后续 `goToPage` 新建而重现。改为 snapshot 整体胜出 + `trimPageIndexedState` 截断 | 同上 |
+
+### 提交二：GIF 管理器五缺陷（fix）
+
+| 范围 | 问题 | 回归测试 |
+| --- | --- | --- |
+| 迁移数据丢失 | `migrateLegacyStateToIndexedDb` 先删 localStorage 键、后写 IndexedDB：put 失败（配额/事务 abort）时回退路径读回空键，全部 GIF 无提示永久丢失。改为写提交成功后再删键，失败保留源键供回退恢复与下次重试 | `gif-manager-storage-regression.test.js` |
+| 配额通知失效 | `withGifStateStore` 只挂 request 成功/失败；IndexedDB 配额错误发生在事务 **commit 阶段**（put 的 onsuccess 已触发），Promise 照常 resolve、`saveFailureNotified` 被重置，”保存失败”提示对 IDB 路径几乎不可能触发。readwrite 结果改为只在 `transaction.oncomplete` 后算成功 | 同上 |
+| 粘滞拖拽 | 拖拽/缩放未 `setPointerCapture`、move 无 `e.buttons` 兜底：窗口外释放的 pointerup 不送达，指针回窗后无需按键即可继续拖动；右键/中键也会启动拖拽。补 capture + release、buttons=0 终止手势、主键检查 | 同上 |
+| 手势监听泄漏 | 拖拽中 GIF 被移除（如加载失败路径）时 doc 级监听闭包引用已脱离容器残留。`removeGif` 主动结束活动手势 | 同上 |
+| NaN 入库 | `buildStateSnapshot` 对未设置的 inline 宽高 `parseInt` 得 NaN 存进 IndexedDB，恢复侧靠 `if (options.width)` 的 falsy 巧合才没出事。快照字段统一过滤为有限整数 | 同上 |
+
+同轮记录、未改动的事项：`saveState` 早到快照竞态（初始化窗口内程序化 `addFloatingGif` 才可能触发，用户交互路径窗口早已关闭）；IDB 连接无 `onversionchange` 处理（DB 版本恒为 1，暂无升级路径）；跨标签页状态同步缺失（见”当前状态”）。
+
+### 提交三：UI 静默失败三处（fix）
+
+| 范围 | 问题 | 回归测试 |
+| --- | --- | --- |
+| 撤销/重做按钮 | 按钮状态只在 `updateUI`（工具切换/成功撤销/会话恢复）里刷新：新会话第一笔提交后按钮仍禁用、只能用快捷键；翻页重置历史后按钮假活。`onStateChanged`（每次落笔提交、翻页、undo/redo 都触发）接入独立的 `updateHistoryButtons`；并给 `#undo-btn/#redo-btn` 补禁用视觉样式（它们是 `.tool-btn`，旧 `.history-btn:disabled` 从未命中） | `ui-feedback-regression.test.js` |
+| 计分板删队 | 只剩一队时删除按钮照常渲染、确认弹窗照常弹出、确认后 `removeTeam` 静默 return。改为仅多于一队时渲染删除按钮 | 同上 |
+| 计时器归零继续 | 倒计时归零后”继续”按钮可点但静默无响应（设计要求先重置，避免重启即再次触发结束铃）。保留语义，点击时 toast 提示需先重置（新增 `timer.finishedResetHint`，8 语言同步） | 同上 |
+
+### 提交四：删除页面（feat）
+
+分页此前只能追加（上限 300 页），误加的空页永远删不掉。分页条新增”删除当前页”按钮（垃圾桶图标，单页禁用，hover 红色警示）：确认弹窗后 `deletePage` 删除页位图并把所有页号键控结构下移一位（`pageBackgrounds` 及其持久化、`pageScenes`、`pageTeachingTools`、raster fallback 三件套、快照访问序），当前页随之 clamp 并重载；删除不进撤销历史（与新建页一致），新增 `page.deletePage*` i18n 键 8 语言同步。回归测试 `pagination-delete-page.test.js`；真实 Chromium 验证了单页禁用、中间页删除后键重排、当前页删除后 clamp、确认弹窗全流程。
+
+本轮验证基线：core 64 项、full 111 项（含真实 Chromium 绘图冒烟与 8 视口响应式检查）、静态发布构建。版本 2.5.5 → 2.5.6（version.txt 同步至 package.json、package-lock.json、manifest.json 图标 URL、index.html manifest 链接、sw.js SW_VERSION 与 CORE_ASSETS 图标条目、README 徽章）。
 
 ## 2026-09-12 审计归档（启动链/基础设施专项 + 跨页教具升级）
 

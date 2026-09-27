@@ -344,6 +344,9 @@ window.translations = {
         previous: '前へ',
         next: '次へ',
         jumpPlaceholder: 'ページ番号を入力',
+        deletePage: '現在のページを削除',
+        deletePageConfirmTitle: 'ページを削除',
+        deletePageConfirm: '現在のページを削除しますか？この操作は元に戻せません。',
         of: ' / ',
         newPage: '新しいページ'
     },

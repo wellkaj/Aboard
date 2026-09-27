@@ -340,6 +340,9 @@ window.translations = {
         previous: 'Anterior',
         next: 'Siguiente',
         jumpPlaceholder: 'Introducir número de página',
+        deletePage: 'Eliminar página actual',
+        deletePageConfirmTitle: 'Eliminar página',
+        deletePageConfirm: '¿Eliminar la página actual? Esta acción no se puede deshacer.',
         of: ' / ',
         newPage: 'Nueva página'
     },

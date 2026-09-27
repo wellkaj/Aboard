@@ -356,6 +356,9 @@ window.translations = {
         previous: '上一頁',
         next: '下一頁',
         jumpPlaceholder: '輸入頁碼跳轉',
+        deletePage: '刪除當前頁',
+        deletePageConfirmTitle: '刪除頁面',
+        deletePageConfirm: '確定刪除當前頁嗎？此操作不可撤銷。',
         of: ' / ',
         newPage: '新建頁面'
     },

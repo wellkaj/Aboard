@@ -432,6 +432,91 @@ function snapshotInheritedBackgroundForNewPage(pageNumber) {
         }
 }
 
+// Deleting a page shifts every page-number-keyed structure down so later
+// pages keep their content under their new numbers. The deleted page's
+// entries drop; pages before it are untouched.
+function shiftPageIndexedStateAfterDeletion(deletedPageNumber) {
+        const shiftRecordMap = (map) => {
+            if (!map || typeof map !== 'object') {
+                return;
+            }
+            const shifted = {};
+            Object.keys(map).forEach((key) => {
+                const pageNumber = Number(key);
+                if (!Number.isInteger(pageNumber)) {
+                    shifted[key] = map[key];
+                    return;
+                }
+                if (pageNumber === deletedPageNumber) {
+                    return;
+                }
+                shifted[pageNumber > deletedPageNumber ? pageNumber - 1 : pageNumber] = map[key];
+            });
+            Object.keys(map).forEach((key) => {
+                delete map[key];
+            });
+            Object.keys(shifted).forEach((key) => {
+                map[key] = shifted[key];
+            });
+        };
+
+        shiftRecordMap(this.pageBackgrounds);
+        persistPageBackgrounds.call(this);
+        this.teachingToolsManager?.shiftPageToolStatesAfterDeletion?.(deletedPageNumber);
+        shiftRecordMap(this.pageScenes);
+
+        if (this.pageRasterFallbackPages instanceof Set) {
+            const shiftedFallbacks = new Set();
+            this.pageRasterFallbackPages.forEach((pageNumber) => {
+                if (pageNumber === deletedPageNumber) return;
+                shiftedFallbacks.add(pageNumber > deletedPageNumber ? pageNumber - 1 : pageNumber);
+            });
+            this.pageRasterFallbackPages = shiftedFallbacks;
+        }
+        const shiftNumberKeyedMap = (map) => {
+            if (!(map instanceof Map)) {
+                return;
+            }
+            const shifted = new Map();
+            map.forEach((value, pageNumber) => {
+                if (pageNumber === deletedPageNumber) return;
+                shifted.set(pageNumber > deletedPageNumber ? pageNumber - 1 : pageNumber, value);
+            });
+            map.clear();
+            shifted.forEach((value, pageNumber) => {
+                map.set(pageNumber, value);
+            });
+        };
+        shiftNumberKeyedMap(this.pageRasterFallbackBases);
+        shiftNumberKeyedMap(this.pageRasterFallbackScaledBases);
+        shiftNumberKeyedMap(this.pageSnapshotAccessOrder);
+}
+
+function deletePage(pageNumber) {
+        if (!Array.isArray(this.pages) || this.pages.length <= 1) {
+            return false;
+        }
+        const target = normalizePageNumber(pageNumber, this.currentPage);
+        if (!Number.isInteger(target) || target < 1 || target > this.pages.length) {
+            return false;
+        }
+        // Capture the CURRENT page first (bitmap, scene, background, tools):
+        // if it sits after the deleted page its state moves to a new number.
+        // If it IS the deleted page, the captured entries drop in the shift —
+        // deletion is by design not undoable, same as page creation.
+        saveCurrentPageSnapshot.call(this);
+        this.pages.splice(target - 1, 1);
+        shiftPageIndexedStateAfterDeletion.call(this, target);
+        if (this.currentPage > target) {
+            this.currentPage -= 1;
+        } else if (this.currentPage === target) {
+            this.currentPage = Math.min(this.currentPage, this.pages.length);
+        }
+        this.loadPage(this.currentPage);
+        this.updatePaginationUI();
+        return true;
+}
+
 function resetTransientBackgroundMediaState(backgroundManager) {
         if (!backgroundManager || typeof backgroundManager !== 'object') {
             return;
@@ -788,6 +873,12 @@ function updatePaginationUI() {
         
         prevBtn.disabled = this.currentPage <= 1;
         nextOrAddBtn.disabled = false;
+
+        // Deleting the only page would leave nothing to draw on.
+        const deletePageBtn = document.getElementById('delete-page-btn');
+        if (deletePageBtn) {
+            deletePageBtn.disabled = this.pages.length <= 1;
+        }
         
         // Update button icon and title based on whether we're on the last page
         // Also show "+" icon when there's only one page total
@@ -834,6 +925,9 @@ window.AboardPaginationRuntime = {
     },
     nextOrAddPage(board) {
         return nextOrAddPage.call(board);
+    },
+    deletePage(board, pageNumber) {
+        return deletePage.call(board, pageNumber);
     },
     goToPage(board, pageNumber, options) {
         return goToPage.call(board, pageNumber, options);

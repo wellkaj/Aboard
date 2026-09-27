@@ -58,6 +58,13 @@
     cursor: not-allowed;
 }
 
+/* Destructive action: tint the hover so "delete page" reads differently
+   from plain navigation. */
+.page-nav-btn.page-delete-btn:hover:not(:disabled) {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
 .page-input {
     width: 48px;
     height: 40px;
