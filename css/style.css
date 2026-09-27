@@ -232,6 +232,16 @@ body.vector-preview-active #off-canvas-image-layer {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* The toolbar undo/redo buttons carry .tool-btn, so the .history-btn:disabled
+   rules never applied to them — a disabled button looked fully clickable. */
+#undo-btn:disabled,
+#redo-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* Zoom input */
 .zoom-input {
     width: 70px;

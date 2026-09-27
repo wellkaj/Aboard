@@ -908,6 +908,7 @@ window.translations = {
         reset: '重置',
         stop: '停止',
         audioFallback: '计时结束（无法播放铃声）',
+        finishedResetHint: '倒计时已结束，请先重置再继续。',
         alertSetTime: '请设置倒计时时间',
         alertTitle: '提示',
         customSoundQuotaExceeded: '存储空间不足，请删除一些自定义铃声。'

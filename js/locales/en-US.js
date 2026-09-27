@@ -908,6 +908,7 @@ window.translations = {
         reset: 'Reset',
         stop: 'Stop',
         audioFallback: 'Timer finished (sound unavailable)',
+        finishedResetHint: 'The countdown has finished. Press reset to start it again.',
         alertSetTime: 'Please set the countdown time',
         alertTitle: 'Alert',
         customSoundQuotaExceeded: 'Storage quota exceeded. Please delete some custom sounds.'

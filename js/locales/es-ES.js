@@ -791,6 +791,7 @@ window.translations = {
         reset: 'Restablecer',
         stop: 'Detener',
         audioFallback: 'Temporizador terminado (sonido no disponible)',
+        finishedResetHint: 'La cuenta regresiva ha terminado. Reinicia para volver a empezar.',
         alertSetTime: 'Por favor, establezca el tiempo de cuenta regresiva',
         alertTitle: 'Alerta'
     },

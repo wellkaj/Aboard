@@ -470,6 +470,11 @@ class DrawingBoard {
         this.historyManager.onStateChanged = () => {
             this.saveSessionDebounced();
             this.classroomModeManager?.syncBoardState?.();
+            // Stroke commits and page switches change canUndo()/canRedo()
+            // without passing through updateUI(); without this refresh the
+            // toolbar buttons go stale (first stroke stays disabled-to-click,
+            // page switches leave dead enabled buttons).
+            window.AboardToolRuntime?.updateHistoryButtons?.(this);
         };
 
         // Initialize

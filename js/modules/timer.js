@@ -663,7 +663,18 @@ class TimerInstance {
             if (this.mode === 'countdown' && this.remainingTime <= 0) {
                 // A finished countdown must be reset before it can continue,
                 // otherwise the restarted interval would refire timerFinished
-                // (and replay the bell) immediately.
+                // (and replay the bell) immediately. The button still says
+                // "Continue", so explain the required reset instead of
+                // failing silently.
+                try {
+                    const toast = (typeof window !== 'undefined')
+                        ? (window.drawingBoard?.settingsManager?.toastManager || window.toastManager)
+                        : null;
+                    toast?.show?.(getTimerText('timer.finishedResetHint',
+                        'The countdown has finished. Press reset to start it again.'), 'info');
+                } catch (toastError) {
+                    console.warn('Failed to display finished-countdown hint:', toastError);
+                }
                 return;
             }
             // Mark the timer as actively running again so state consumers like

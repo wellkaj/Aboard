@@ -307,13 +307,19 @@ class ScoreboardInstance {
             col.dataset.index = index;
 
             const removeTeamLabel = getScoreboardText('scoreboard.removeTeam', 'Remove Team');
-            col.innerHTML = `
-                <button class="score-remove-btn" title="${escapeScoreboardHtml(removeTeamLabel)}" aria-label="${escapeScoreboardHtml(removeTeamLabel)}">
+            // The remove button is only offered while another team would
+            // remain: removeTeam keeps at least one team, so a lone team's
+            // button could only open a confirmation that then does nothing.
+            const removeButtonMarkup = this.config.teams.length > 1
+                ? `<button class="score-remove-btn" title="${escapeScoreboardHtml(removeTeamLabel)}" aria-label="${escapeScoreboardHtml(removeTeamLabel)}">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
-                </button>
+                </button>`
+                : '';
+            col.innerHTML = `
+                ${removeButtonMarkup}
                 <div class="score-team-name" contenteditable="true"></div>
                 <div class="score-value">${score}</div>
                 <div class="score-controls">

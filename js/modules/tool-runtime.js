@@ -162,6 +162,21 @@ function setTool(tool, showConfig = true) {
     }
 }
 
+// Kept separate from updateUI(): history commits (every stroke, every page
+// switch) must refresh the undo/redo buttons, but a full updateUI on each
+// commit would reset cursors and panels for no reason.
+function updateHistoryButtons() {
+    const undoBtn = getElement('undo-btn');
+    if (undoBtn) {
+        undoBtn.disabled = !this.historyManager.canUndo();
+    }
+
+    const redoBtn = getElement('redo-btn');
+    if (redoBtn) {
+        redoBtn.disabled = !this.historyManager.canRedo();
+    }
+}
+
 function updateUI() {
     const configArea = getElement('config-area');
 
@@ -222,16 +237,8 @@ function updateUI() {
         configArea.classList.remove('show');
     }
     
-    const undoBtn = getElement('undo-btn');
-    if (undoBtn) {
-        undoBtn.disabled = !this.historyManager.canUndo();
-    }
+    updateHistoryButtons.call(this);
 
-    const redoBtn = getElement('redo-btn');
-    if (redoBtn) {
-        redoBtn.disabled = !this.historyManager.canRedo();
-    }
-    
     const paginationControls = getElement('pagination-controls');
     addClassIfPresent(paginationControls, 'show');
     this.classroomModeManager?.syncBoardState?.();
@@ -249,5 +256,8 @@ window.AboardToolRuntime = {
     },
     updateUI(board) {
         return updateUI.call(board);
+    },
+    updateHistoryButtons(board) {
+        return updateHistoryButtons.call(board);
     }
 };

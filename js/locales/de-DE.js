@@ -804,6 +804,7 @@ window.translations = {
         reset: 'Zurücksetzen',
         stop: 'Stoppen',
         audioFallback: 'Timer beendet (Ton nicht verfügbar)',
+        finishedResetHint: 'Der Countdown ist beendet. Zum Neustart zuerst zurücksetzen.',
         alertSetTime: 'Bitte stellen Sie die Countdown-Zeit ein',
         alertTitle: 'Hinweis'
     },

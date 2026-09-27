@@ -905,6 +905,7 @@ window.translations = {
         reset: '重置',
         stop: '停止',
         audioFallback: '計時結束（無法播放鈴聲）',
+        finishedResetHint: '倒計時已結束，請先重置再繼續。',
         alertSetTime: '請設定倒計時時間',
         alertTitle: '提示'
     },

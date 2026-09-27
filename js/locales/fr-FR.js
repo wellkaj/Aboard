@@ -791,6 +791,7 @@ window.translations = {
         reset: 'Réinitialiser',
         stop: 'Arrêter',
         audioFallback: 'Minuteur terminé (son indisponible)',
+        finishedResetHint: 'Le compte à rebours est terminé. Réinitialisez pour le relancer.',
         alertSetTime: 'Veuillez régler le compte à rebours',
         alertTitle: 'Alerte'
     },
