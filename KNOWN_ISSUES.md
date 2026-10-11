@@ -32,9 +32,15 @@
 
 分页此前只能新建（空白）与删除，做“变式练习页/重做页”只能从空白页重建。分页条新增“复制当前页”按钮（复制图标，位于删除按钮左侧，达 300 页上限禁用，无需确认——非破坏性、删除副本即撤销）：`duplicatePage` 先固化当前页快照（位图/场景/背景/教具），在当前页之后插入副本并把所有页号键控结构上移一位（`shiftPageIndexedStateAfterInsertion`，pageBackgrounds 及其持久化、pageScenes、`shiftPageToolStatesAfterInsertion`、raster fallback 三件套、快照访问序），副本继承源页条目：背景条目深克隆（池指纹引用不受影响）、场景经 `capturePageScene` 活捕全新对象（保留贴图 imageElement 引用、无跨页别名）、位图快照共享引用（槽位整存整取、从不就地修改）、教具逐条克隆、raster fallback 基底共享引用；副本成为当前页并经 `loadPage` 装载。仅支持复制当前页（场景活捕读的是当前画布）。与新建/删除一致不进撤销历史。新增 `page.duplicatePage` i18n 键 8 语言同步。回归测试 `pagination-duplicate-page.test.js`。
 
-同轮记录、未改动的事项：德/西/法/日/韩 locale 相对 zh-CN 各缺约 100 键（fallback 链兜底显示英文，属翻译完备度而非缺陷）；计时器不随会话持久化恢复（临时教具定位，已记入“当前状态”）。
+同轮记录、未改动的事项：计时器不随会话持久化恢复（临时教具定位，已记入“当前状态”）。（注：本轮归档时曾记“德/西/法/日/韩相对 zh-CN 各缺约 100 键”，系复核口径错误——未计入 overrides.js 与 help 文件的合并覆盖；`locale-files.test.js` 的键齐平守护（容差 0）一直是绿的，见下方翻译修正小节。）
 
 本轮验证基线：core 66 项、full 113 项（含真实 Chromium 绘图冒烟与 8 视口响应式检查）、静态发布构建。版本 2.5.6 → 2.5.7（version.txt 同步至 package.json、package-lock.json、manifest.json 图标 URL、index.html manifest 链接、sw.js SW_VERSION 与 CORE_ASSETS 图标条目、README 徽章）。
+
+## 2026-10-11 翻译修正（overrides 变音符号专项）
+
+上轮记录的“翻译完备度”事项复核后确认为零缺失：8 语言有效键集（语言文件 ∪ overrides.js ∪ help 文件）相对 zh-CN 全部齐平，`locale-files.test.js` 的键齐平/占位符齐平检查一直为绿。真实问题是 **overrides.js 中德/法/西翻译的变音符号全部丢失**（该文件为纯 ASCII 输出：`Radiergrosse`、`Demarrer`、`Configuracion`），共 125 处拼写错误，且 overrides 在运行时合并于语言文件之上，错值甚至覆盖了 de/fr/es 主文件里本已正确的翻译（如 fr/es 主文件的 `Tamaño título` 字号标签被 `Tamano de fuente del titulo` 覆盖）。逐处对照正确拼写修正（德语顺带统一为 Sie 敬语形式，`Zeitschriftgrosse` 这一会被读成“杂志大小”的错构词改为 `Schriftgröße der Uhrzeit`）。回归测试 `locale-overrides-diacritics.test.js`：跨 de/fr/es 子树的坏词黑名单扫描 + 9 项抽样正向断言，修复前红、修复后绿（逐项 stash 回退验证）。附带确认：各语言文件的 EXTRA 死键（`settings.background.upload`、`timer.fontSizeHint`、`colors.light*` 等，均无代码引用路径）保留不动，无害。
+
+本轮验证基线：core 67 项、full 114 项（含真实 Chromium 绘图冒烟与 8 视口响应式检查）、静态发布构建、8 语言三源键齐平复扫。版本 2.5.7 → 2.5.8（version.txt 同步至 package.json、package-lock.json、manifest.json 图标 URL、index.html manifest 链接、sw.js SW_VERSION 与 CORE_ASSETS 图标条目、README 徽章）。
 
 ## 2026-09-27 审计归档（跨页教具复核 + GIF 存储专项 + UI 静默失败）
 

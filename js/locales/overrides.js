@@ -452,11 +452,11 @@ window.locale_translation_overrides = (() => {
         'fr-FR': {
             common: {
                 inputRequired: 'Veuillez saisir du contenu.',
-                start: 'Demarrer',
-                stop: 'Arreter',
-                preview: 'Apercu',
-                settings: 'Parametres',
-                dragToMove: 'Faire glisser pour deplacer'
+                start: 'Démarrer',
+                stop: 'Arrêter',
+                preview: 'Aperçu',
+                settings: 'Paramètres',
+                dragToMove: 'Faire glisser pour déplacer'
             },
             errors: {
                 fileReadFailed: 'Impossible de lire le fichier sélectionné. Vérifiez qu\'il n\'est pas endommagé, puis réessayez.',
@@ -473,7 +473,7 @@ window.locale_translation_overrides = (() => {
             },
             tools: {
                 pen: {
-                    thickness: 'Epaisseur du stylo'
+                    thickness: 'Épaisseur du stylo'
                 },
                 eraser: {
                     sizeLabel: 'Taille de la gomme : Actuelle',
@@ -488,18 +488,18 @@ window.locale_translation_overrides = (() => {
             },
             background: {
                 imagePrefix: 'Image',
-                opacityLabel: 'Opacite de l\'arriere-plan : Actuelle',
-                contrastLabel: 'Intensite du motif : Actuelle',
-                preferenceHint: 'Choisissez les motifs affiches dans la barre des proprietes',
-                upload: 'Televerser'
+                opacityLabel: 'Opacité de l\'arrière-plan : Actuelle',
+                contrastLabel: 'Intensité du motif : Actuelle',
+                preferenceHint: 'Choisissez les motifs affichés dans la barre des propriétés',
+                upload: 'Téléverser'
             },
             settings: {
-                exportFailed: 'Echec de l\'exportation de la configuration',
+                exportFailed: 'Échec de l\'exportation de la configuration',
                 diff: {
                     current: 'Actuel',
                     new: 'Nouveau',
-                    title: 'Differences de configuration',
-                    message: 'Verifiez les differences entre la configuration actuelle et la nouvelle configuration avant l\'importation.',
+                    title: 'Différences de configuration',
+                    message: 'Vérifiez les différences entre la configuration actuelle et la nouvelle configuration avant l\'importation.',
                     oldValue: 'Ancienne valeur',
                     newValue: 'Nouvelle valeur',
                     confirm: 'Confirmer l\'importation',
@@ -508,18 +508,18 @@ window.locale_translation_overrides = (() => {
                 },
                 display: {
                     showImportExportBtn: 'Afficher les boutons d\'import/export',
-                    showImportExportBtnHint: 'Une fois active, les boutons d\'import/export s\'affichent a cote des controles de zoom',
+                    showImportExportBtnHint: 'Une fois activée, les boutons d\'import/export s\'affichent à côté des contrôles de zoom',
                     showToolbarText: 'Afficher le texte de la barre d\'outils',
-                    showToolbarTextHint: 'Afficher ou non les libelles sur les boutons de la barre d\'outils'
+                    showToolbarTextHint: 'Afficher ou non les libellés sur les boutons de la barre d\'outils'
                 },
                 general: {
-                    fontManagementHint: 'Gestion des polices : tri, affichage, renommage et apercu pris en charge',
+                    fontManagementHint: 'Gestion des polices : tri, affichage, renommage et aperçu pris en charge',
                     showFont: 'Afficher la police',
-                    fontPreviewSample: 'Apercu de police ABC abc 123',
-                    updatePreference: 'Mode de mise a jour',
-                    updatePreferenceHint: 'Choisit comment appliquer une mise a jour lorsqu\'elle est prete',
-                    updatePreferencePrompt: 'Mettre a jour au repos',
-                    updatePreferenceAuto: 'Mettre a jour maintenant',
+                    fontPreviewSample: 'Aperçu de police ABC abc 123',
+                    updatePreference: 'Mode de mise à jour',
+                    updatePreferenceHint: 'Choisit comment appliquer une mise à jour lorsqu\'elle est prête',
+                    updatePreferencePrompt: 'Mettre à jour au repos',
+                    updatePreferenceAuto: 'Mettre à jour maintenant',
                     touchZoom: 'Zoom tactile',
                     touchZoomHint: 'Autoriser le zoom de la toile par pincement a deux doigts',
                     fonts: {
@@ -527,36 +527,36 @@ window.locale_translation_overrides = (() => {
                     }
                 },
                 canvas: {
-                    unlimitedZoom: 'Autoriser le zoom illimite',
+                    unlimitedZoom: 'Autoriser le zoom illimité',
                     alignmentGuides: 'Guides d\'alignement intelligents',
-                    alignmentGuidesHint: 'Aligne sur les bords et les axes centraux des autres objets et du canevas pendant le deplacement, et affiche des guides',
-                    unlimitedZoomHint: 'Le zoom par defaut monte desormais a 1000 % ; activez cette option pour continuer jusqu\'a 500x'
+                    alignmentGuidesHint: 'Aligne sur les bords et les axes centraux des autres objets et du canevas pendant le déplacement, et affiche des guides',
+                    unlimitedZoomHint: 'Le zoom par défaut monte désormais à 1000 % ; activez cette option pour continuer jusqu\'à 500x'
                 },
                 time: {
-                    timezoneHint: 'Choisissez le fuseau horaire affiche',
+                    timezoneHint: 'Choisissez le fuseau horaire affiché',
                     timeFormatHint: 'Choisissez le format d\'affichage de l\'heure',
                     dateFormatHint: 'Choisissez le format d\'affichage de la date',
-                    dateFormatAuto: 'Suivre le systeme',
-                    colorSettingsHint: 'Reglez les couleurs du texte et de l\'arriere-plan du widget temporel',
-                    fontSizeHint: 'Reglez la taille du texte du widget temporel',
-                    opacityHint: 'Reglez la transparence du widget temporel',
-                    fullscreenModeHint: 'Choisissez le mode d\'entree en plein ecran',
+                    dateFormatAuto: 'Suivre le système',
+                    colorSettingsHint: 'Réglez les couleurs du texte et de l\'arrière-plan du widget temporel',
+                    fontSizeHint: 'Réglez la taille du texte du widget temporel',
+                    opacityHint: 'Réglez la transparence du widget temporel',
+                    fullscreenModeHint: 'Choisissez le mode d\'entrée en plein écran',
                     displayOptions: 'Options d\'affichage'
                 }
             },
             randomPicker: {
-                namePicker: 'Selecteur de noms',
-                numberPicker: 'Selecteur de nombres',
+                namePicker: 'Sélecteur de noms',
+                numberPicker: 'Sélecteur de nombres',
                 noNames: 'Veuillez saisir au moins un nom',
-                settingsTitle: 'Parametres du selecteur',
+                settingsTitle: 'Paramètres du sélecteur',
                 modeName: 'Noms',
                 modeNumber: 'Nombres',
                 titleLabel: 'Titre',
-                titlePlaceholder: 'Ex. : Interrogation eclair',
+                titlePlaceholder: 'Ex. : Interrogation éclair',
                 namesLabel: 'Liste des noms',
                 namesPlaceholder: 'Saisissez un nom par ligne',
-                defaultNames: 'Alice\nBruno\nChloe\nDavid\nEmma',
-                allowRepeats: 'Autoriser les repetitions',
+                defaultNames: 'Alice\nBruno\nChloé\nDavid\nEmma',
+                allowRepeats: 'Autoriser les répétitions',
                 rangeLabel: 'Plage de nombres',
                 rangeMin: 'Minimum',
                 rangeMax: 'Maximum',
@@ -564,42 +564,42 @@ window.locale_translation_overrides = (() => {
                 importColumnPlaceholder: 'Colonne',
                 defaultColumnName: 'Nom',
                 importBtn: 'Importer Excel/CSV',
-                importHint: 'Prend en charge .xlsx, .xls et .csv, et detecte automatiquement la colonne des noms',
-                importSuccess: '{count} noms importes avec succes',
-                importNoData: 'Aucune donnee valide n\'a ete trouvee',
-                importError: 'Echec de l\'importation du fichier'
+                importHint: 'Prend en charge .xlsx, .xls et .csv, et détecte automatiquement la colonne des noms',
+                importSuccess: '{count} noms importés avec succès',
+                importNoData: 'Aucune donnée valide n\'a été trouvée',
+                importError: 'Échec de l\'importation du fichier'
             },
             scoreboard: {
                 title: 'Tableau de score',
-                addTeam: 'Ajouter une equipe',
-                reset: 'Reinitialiser',
-                confirmRemoveTeam: 'Supprimer cette equipe ?',
-                teamDefault: 'Equipe',
-                removeTeam: 'Supprimer l\'equipe',
+                addTeam: 'Ajouter une équipe',
+                reset: 'Réinitialiser',
+                confirmRemoveTeam: 'Supprimer cette équipe ?',
+                teamDefault: 'Équipe',
+                removeTeam: 'Supprimer l\'équipe',
                 increaseScore: 'Augmenter le score de {team}',
                 decreaseScore: 'Diminuer le score de {team}',
-                confirmReset: 'Reinitialiser tous les scores ?'
+                confirmReset: 'Réinitialiser tous les scores ?'
             },
             timer: {
-                selectMode: 'Selectionner le mode',
+                selectMode: 'Sélectionner le mode',
                 timerTitle: 'Titre du minuteur',
-                setTime: 'Definir l\'heure',
-                setStartTime: 'Definir l\'heure de depart',
+                setTime: 'Définir l\'heure',
+                setStartTime: 'Définir l\'heure de départ',
                 titleFontSize: 'Taille de police du titre',
                 timeFontSize: 'Taille de police du temps',
                 minimal: 'Minimal',
                 minimalMode: 'Mode minimal',
                 preview: 'Aperçu',
-                opacity: 'Opacite',
-                opacityLabel: 'Opacite : Actuelle',
-                fullscreenFontSize: 'Taille de police en plein ecran',
-                fullscreenFontSizeLabel: 'Taille de police en plein ecran : Actuelle',
+                opacity: 'Opacité',
+                opacityLabel: 'Opacité : Actuelle',
+                fullscreenFontSize: 'Taille de police en plein écran',
+                fullscreenFontSizeLabel: 'Taille de police en plein écran : Actuelle',
                 customSoundQuotaExceeded: 'Espace de stockage insuffisant. Supprimez quelques sons personnalisés.'
             },
             export: {
-                selectAtLeastOnePage: 'Veuillez selectionner au moins une page',
-                paginationRequired: 'Cette fonctionnalite necessite d\'activer le mode pagine',
-                noPages: 'Aucune page disponible a exporter'
+                selectAtLeastOnePage: 'Veuillez sélectionner au moins une page',
+                paginationRequired: 'Cette fonctionnalité nécessite d\'activer le mode paginé',
+                noPages: 'Aucune page disponible à exporter'
             },
             projectPackage: {
                 rasterFallbackUnavailable: 'Les données de page matricielles nécessaires pour préserver entièrement le projet ne sont pas disponibles.'
@@ -611,7 +611,7 @@ window.locale_translation_overrides = (() => {
                 start: 'Iniciar',
                 stop: 'Detener',
                 preview: 'Vista previa',
-                settings: 'Configuracion',
+                settings: 'Configuración',
                 dragToMove: 'Arrastra para mover'
             },
             errors: {
@@ -629,36 +629,36 @@ window.locale_translation_overrides = (() => {
             },
             tools: {
                 pen: {
-                    thickness: 'Grosor del lapiz'
+                    thickness: 'Grosor del lápiz'
                 },
                 eraser: {
-                    sizeLabel: 'Tamano del borrador: Actual',
+                    sizeLabel: 'Tamaño del borrador: Actual',
                     shape: 'Forma'
                 }
             },
             timeDisplay: {
                 am: 'AM',
                 pm: 'PM',
-                titleFontSize: 'Tamano de fuente del titulo',
-                timeFontSize: 'Tamano de fuente de la hora'
+                titleFontSize: 'Tamaño de fuente del título',
+                timeFontSize: 'Tamaño de fuente de la hora'
             },
             background: {
                 imagePrefix: 'Imagen',
                 opacityLabel: 'Opacidad del fondo: Actual',
-                contrastLabel: 'Intensidad del patron: Actual',
+                contrastLabel: 'Intensidad del patrón: Actual',
                 preferenceHint: 'Elige los patrones que se muestran en la barra de propiedades',
                 upload: 'Subir'
             },
             settings: {
-                exportFailed: 'No se pudo exportar la configuracion',
+                exportFailed: 'No se pudo exportar la configuración',
                 diff: {
                     current: 'Actual',
                     new: 'Nuevo',
-                    title: 'Diferencias de configuracion',
-                    message: 'Revisa las diferencias entre la configuracion actual y la nueva antes de importar.',
+                    title: 'Diferencias de configuración',
+                    message: 'Revisa las diferencias entre la configuración actual y la nueva antes de importar.',
                     oldValue: 'Valor anterior',
                     newValue: 'Valor nuevo',
-                    confirm: 'Confirmar importacion',
+                    confirm: 'Confirmar importación',
                     cancel: 'Cancelar',
                     noChanges: 'No hay diferencias. La configuración es idéntica.'
                 },
@@ -669,14 +669,14 @@ window.locale_translation_overrides = (() => {
                     showToolbarTextHint: 'Define si los botones de la barra muestran etiquetas de texto'
                 },
                 general: {
-                    fontManagementHint: 'Gestion de fuentes: permite ordenar, mostrar u ocultar, renombrar y previsualizar',
+                    fontManagementHint: 'Gestión de fuentes: permite ordenar, mostrar u ocultar, renombrar y previsualizar',
                     showFont: 'Mostrar fuente',
                     fontPreviewSample: 'Vista previa de fuente ABC abc 123',
-                    updatePreference: 'Modo de actualizacion',
-                    updatePreferenceHint: 'Elige como aplicar la actualizacion cuando este lista',
+                    updatePreference: 'Modo de actualización',
+                    updatePreferenceHint: 'Elige cómo aplicar la actualización cuando esté lista',
                     updatePreferencePrompt: 'Actualizar en inactividad',
                     updatePreferenceAuto: 'Actualizar ahora',
-                    touchZoom: 'Zoom tactil',
+                    touchZoom: 'Zoom táctil',
                     touchZoomHint: 'Permite acercar o alejar el lienzo con dos dedos',
                     fonts: {
                         ...sharedFontLabels
@@ -684,9 +684,9 @@ window.locale_translation_overrides = (() => {
                 },
                 canvas: {
                     unlimitedZoom: 'Permitir zoom ilimitado',
-                    alignmentGuides: 'Guias de alineacion inteligentes',
-                    alignmentGuidesHint: 'Ajusta a los bordes y ejes centrales de otros objetos y del lienzo al arrastrar, y muestra guias',
-                    unlimitedZoomHint: 'El zoom predeterminado ahora llega al 1000 %; activalo para seguir ampliando hasta 500x'
+                    alignmentGuides: 'Guías de alineación inteligentes',
+                    alignmentGuidesHint: 'Ajusta a los bordes y ejes centrales de otros objetos y del lienzo al arrastrar, y muestra guías',
+                    unlimitedZoomHint: 'El zoom predeterminado ahora llega al 1000 %; actívalo para seguir ampliando hasta 500x'
                 },
                 time: {
                     timezoneHint: 'Elige la zona horaria que deseas mostrar',
@@ -694,35 +694,35 @@ window.locale_translation_overrides = (() => {
                     dateFormatHint: 'Elige el formato de fecha',
                     dateFormatAuto: 'Seguir al sistema',
                     colorSettingsHint: 'Configura los colores del texto y del fondo del widget de hora',
-                    fontSizeHint: 'Ajusta el tamano del texto del widget de hora',
+                    fontSizeHint: 'Ajusta el tamaño del texto del widget de hora',
                     opacityHint: 'Ajusta la transparencia del widget de hora',
-                    fullscreenModeHint: 'Elige como entrar en pantalla completa',
-                    displayOptions: 'Opciones de visualizacion'
+                    fullscreenModeHint: 'Elige cómo entrar en pantalla completa',
+                    displayOptions: 'Opciones de visualización'
                 }
             },
             randomPicker: {
                 namePicker: 'Selector de nombres',
-                numberPicker: 'Selector de numeros',
+                numberPicker: 'Selector de números',
                 noNames: 'Introduce al menos un nombre',
-                settingsTitle: 'Configuracion del selector',
+                settingsTitle: 'Configuración del selector',
                 modeName: 'Nombres',
-                modeNumber: 'Numeros',
-                titleLabel: 'Titulo',
-                titlePlaceholder: 'Ej.: Pregunta rapida',
+                modeNumber: 'Números',
+                titleLabel: 'Título',
+                titlePlaceholder: 'Ej.: Pregunta rápida',
                 namesLabel: 'Lista de nombres',
                 namesPlaceholder: 'Escribe un nombre por linea',
                 defaultNames: 'Ana\nLuis\nMarta\nDiego\nElena',
                 allowRepeats: 'Permitir repeticiones',
-                rangeLabel: 'Rango numerico',
-                rangeMin: 'Minimo',
-                rangeMax: 'Maximo',
+                rangeLabel: 'Rango numérico',
+                rangeMin: 'Mínimo',
+                rangeMax: 'Máximo',
                 importLabel: 'Importar lista',
                 importColumnPlaceholder: 'Columna',
                 defaultColumnName: 'Nombre',
                 importBtn: 'Importar Excel/CSV',
-                importHint: 'Compatible con .xlsx, .xls y .csv; detecta automaticamente la columna de nombres',
+                importHint: 'Compatible con .xlsx, .xls y .csv; detecta automáticamente la columna de nombres',
                 importSuccess: 'Se importaron {count} nombres correctamente',
-                importNoData: 'No se encontraron datos validos',
+                importNoData: 'No se encontraron datos válidos',
                 importError: 'No se pudo importar el archivo'
             },
             scoreboard: {
@@ -738,24 +738,24 @@ window.locale_translation_overrides = (() => {
             },
             timer: {
                 selectMode: 'Seleccionar modo',
-                timerTitle: 'Titulo del temporizador',
+                timerTitle: 'Título del temporizador',
                 setTime: 'Definir tiempo',
                 setStartTime: 'Definir hora inicial',
-                titleFontSize: 'Tamano de fuente del titulo',
-                timeFontSize: 'Tamano de fuente del tiempo',
+                titleFontSize: 'Tamaño de fuente del título',
+                timeFontSize: 'Tamaño de fuente del tiempo',
                 minimal: 'Mínimo',
                 minimalMode: 'Modo mínimo',
                 preview: 'Vista previa',
                 opacity: 'Opacidad',
                 opacityLabel: 'Opacidad: Actual',
-                fullscreenFontSize: 'Tamano de fuente en pantalla completa',
-                fullscreenFontSizeLabel: 'Tamano de fuente en pantalla completa: Actual',
+                fullscreenFontSize: 'Tamaño de fuente en pantalla completa',
+                fullscreenFontSizeLabel: 'Tamaño de fuente en pantalla completa: Actual',
                 customSoundQuotaExceeded: 'No hay espacio de almacenamiento suficiente. Elimina algunos sonidos personalizados.'
             },
             export: {
-                selectAtLeastOnePage: 'Selecciona al menos una pagina',
-                paginationRequired: 'Esta funcion requiere activar primero el modo paginado',
-                noPages: 'No hay paginas disponibles para exportar'
+                selectAtLeastOnePage: 'Selecciona al menos una página',
+                paginationRequired: 'Esta función requiere activar primero el modo paginado',
+                noPages: 'No hay páginas disponibles para exportar'
             },
             projectPackage: {
                 rasterFallbackUnavailable: 'No están disponibles los datos de página rasterizados necesarios para conservar todo el contenido del proyecto.'
@@ -780,29 +780,29 @@ window.locale_translation_overrides = (() => {
                 clearLocalDataFailed: 'Der lokale Cache konnte nicht vollständig gelöscht werden. Versuchen Sie es später erneut.'
             },
             teachingTools: {
-                increaseCount: 'Anzahl fur {tool} erhohen',
-                decreaseCount: 'Anzahl fur {tool} verringern'
+                increaseCount: 'Anzahl für {tool} erhöhen',
+                decreaseCount: 'Anzahl für {tool} verringern'
             },
             tools: {
                 pen: {
                     thickness: 'Stiftdicke'
                 },
                 eraser: {
-                    sizeLabel: 'Radiergrosse: Aktuell',
+                    sizeLabel: 'Radiergröße: Aktuell',
                     shape: 'Form'
                 }
             },
             timeDisplay: {
                 am: 'AM',
                 pm: 'PM',
-                titleFontSize: 'Titelschriftgrosse',
-                timeFontSize: 'Zeitschriftgrosse'
+                titleFontSize: 'Titelschriftgröße',
+                timeFontSize: 'Schriftgröße der Uhrzeit'
             },
             background: {
                 imagePrefix: 'Bild',
                 opacityLabel: 'Hintergrundtransparenz: Aktuell',
-                contrastLabel: 'Musterintensitat: Aktuell',
-                preferenceHint: 'Wahle die Muster aus, die in der Eigenschaftenleiste angezeigt werden',
+                contrastLabel: 'Musterintensität: Aktuell',
+                preferenceHint: 'Wählen Sie die Muster aus, die in der Eigenschaftenleiste angezeigt werden',
                 upload: 'Hochladen'
             },
             settings: {
@@ -811,21 +811,21 @@ window.locale_translation_overrides = (() => {
                     current: 'Aktuell',
                     new: 'Neu',
                     title: 'Konfigurationsunterschiede',
-                    message: 'Bitte prufe vor dem Import die Unterschiede zwischen der aktuellen und der neuen Konfiguration.',
+                    message: 'Bitte prüfen Sie vor dem Import die Unterschiede zwischen der aktuellen und der neuen Konfiguration.',
                     oldValue: 'Alter Wert',
                     newValue: 'Neuer Wert',
-                    confirm: 'Import bestatigen',
+                    confirm: 'Import bestätigen',
                     cancel: 'Abbrechen',
                     noChanges: 'Keine Unterschiede gefunden. Die Einstellungen sind identisch.'
                 },
                 display: {
-                    showImportExportBtn: 'Import-/Export-Schaltflachen anzeigen',
-                    showImportExportBtnHint: 'Wenn aktiviert, werden Import-/Export-Schaltflachen neben den Zoom-Steuerelementen angezeigt',
+                    showImportExportBtn: 'Import-/Export-Schaltflächen anzeigen',
+                    showImportExportBtnHint: 'Wenn aktiviert, werden Import-/Export-Schaltflächen neben den Zoom-Steuerelementen angezeigt',
                     showToolbarText: 'Werkzeugleistentext anzeigen',
-                    showToolbarTextHint: 'Legt fest, ob Werkzeugleistenschaltflachen Textbeschriftungen anzeigen'
+                    showToolbarTextHint: 'Legt fest, ob Werkzeugleistenschaltflächen Textbeschriftungen anzeigen'
                 },
                 general: {
-                    fontManagementHint: 'Schriftverwaltung: Sortieren, Ein-/Ausblenden, Umbenennen und Vorschau werden unterstutzt',
+                    fontManagementHint: 'Schriftverwaltung: Sortieren, Ein-/Ausblenden, Umbenennen und Vorschau werden unterstützt',
                     showFont: 'Schrift anzeigen',
                     fontPreviewSample: 'Schriftvorschau ABC abc 123',
                     updatePreference: 'Update-Verhalten',
@@ -842,31 +842,31 @@ window.locale_translation_overrides = (() => {
                     unlimitedZoom: 'Unbegrenztes Zoomen erlauben',
                     alignmentGuides: 'Intelligente Ausrichtungslinien',
                     alignmentGuidesHint: 'Rastet beim Ziehen an Kanten und Mittellinien anderer Objekte und der Leinwand ein und zeigt Hilfslinien',
-                    unlimitedZoomHint: 'Standardmassig ist jetzt ein Zoom bis 1000 % moglich; aktiviert lasst sich weiter bis 500x vergrosern'
+                    unlimitedZoomHint: 'Standardmäßig ist jetzt ein Zoom bis 1000 % möglich; aktiviert lässt sich weiter bis 500× vergrößern'
                 },
                 time: {
-                    timezoneHint: 'Wahle die anzuzeigende Zeitzone',
-                    timeFormatHint: 'Wahle das Zeitformat',
-                    dateFormatHint: 'Wahle das Datumsformat',
+                    timezoneHint: 'Wählen Sie die anzuzeigende Zeitzone',
+                    timeFormatHint: 'Wählen Sie das Zeitformat',
+                    dateFormatHint: 'Wählen Sie das Datumsformat',
                     dateFormatAuto: 'Systemeinstellung verwenden',
-                    colorSettingsHint: 'Lege Text- und Hintergrundfarben fur das Zeit-Widget fest',
-                    fontSizeHint: 'Passe die Textgrosse des Zeit-Widgets an',
-                    opacityHint: 'Passe die Transparenz des Zeit-Widgets an',
-                    fullscreenModeHint: 'Wahle, wie der Vollbildmodus ausgelost wird',
+                    colorSettingsHint: 'Legen Sie Text- und Hintergrundfarben für das Zeit-Widget fest',
+                    fontSizeHint: 'Passen Sie die Textgröße des Zeit-Widgets an',
+                    opacityHint: 'Passen Sie die Transparenz des Zeit-Widgets an',
+                    fullscreenModeHint: 'Wählen Sie, wie der Vollbildmodus ausgelöst wird',
                     displayOptions: 'Anzeigeoptionen'
                 }
             },
             randomPicker: {
                 namePicker: 'Namensauswahl',
                 numberPicker: 'Zahlenauswahl',
-                noNames: 'Bitte gib mindestens einen Namen ein',
+                noNames: 'Bitte geben Sie mindestens einen Namen ein',
                 settingsTitle: 'Auswahleinstellungen',
                 modeName: 'Namen',
                 modeNumber: 'Zahlen',
                 titleLabel: 'Titel',
                 titlePlaceholder: 'Z. B. Blitzfrage',
                 namesLabel: 'Namensliste',
-                namesPlaceholder: 'Gib pro Zeile einen Namen ein',
+                namesPlaceholder: 'Geben Sie pro Zeile einen Namen ein',
                 defaultNames: 'Anna\nBen\nClara\nDavid\nEmma',
                 allowRepeats: 'Wiederholungen erlauben',
                 rangeLabel: 'Zahlenbereich',
@@ -876,43 +876,43 @@ window.locale_translation_overrides = (() => {
                 importColumnPlaceholder: 'Spalte',
                 defaultColumnName: 'Name',
                 importBtn: 'Excel/CSV importieren',
-                importHint: 'Unterstutzt .xlsx, .xls und .csv und erkennt die Namensspalte automatisch',
+                importHint: 'Unterstützt .xlsx, .xls und .csv und erkennt die Namensspalte automatisch',
                 importSuccess: '{count} Namen erfolgreich importiert',
-                importNoData: 'Keine gultigen Daten gefunden',
+                importNoData: 'Keine gültigen Daten gefunden',
                 importError: 'Datei konnte nicht importiert werden'
             },
             scoreboard: {
                 title: 'Punktestand',
-                addTeam: 'Team hinzufugen',
-                reset: 'Zurucksetzen',
+                addTeam: 'Team hinzufügen',
+                reset: 'Zurücksetzen',
                 confirmRemoveTeam: 'Dieses Team entfernen?',
                 teamDefault: 'Team',
                 removeTeam: 'Team entfernen',
-                increaseScore: 'Punktzahl fur {team} erhohen',
-                decreaseScore: 'Punktzahl fur {team} verringern',
-                confirmReset: 'Alle Punktestande zurucksetzen?'
+                increaseScore: 'Punktzahl für {team} erhöhen',
+                decreaseScore: 'Punktzahl für {team} verringern',
+                confirmReset: 'Alle Punktestände zurücksetzen?'
             },
             timer: {
                 settingsTitle: 'Timer-Einstellungen',
-                selectMode: 'Modus auswahlen',
+                selectMode: 'Modus auswählen',
                 timerTitle: 'Timer-Titel',
                 setTime: 'Zeit festlegen',
                 setStartTime: 'Startzeit festlegen',
-                titleFontSize: 'Titelschriftgrosse',
-                timeFontSize: 'Zeitschriftgrosse',
+                titleFontSize: 'Titelschriftgröße',
+                timeFontSize: 'Schriftgröße der Uhrzeit',
                 minimal: 'Minimal',
                 minimalMode: 'Minimalanzeige (Doppelklick zum Wiederherstellen)',
                 preview: 'Vorschau',
                 opacity: 'Transparenz',
                 opacityLabel: 'Transparenz: Aktuell',
-                fullscreenFontSize: 'Schriftgrosse im Vollbild',
-                fullscreenFontSizeLabel: 'Schriftgrosse im Vollbild: Aktuell',
+                fullscreenFontSize: 'Schriftgröße im Vollbild',
+                fullscreenFontSizeLabel: 'Schriftgröße im Vollbild: Aktuell',
                 customSoundQuotaExceeded: 'Nicht genügend Speicherplatz. Löschen Sie einige benutzerdefinierte Töne.'
             },
             export: {
-                selectAtLeastOnePage: 'Bitte wahlen Sie mindestens eine Seite aus',
+                selectAtLeastOnePage: 'Bitte wählen Sie mindestens eine Seite aus',
                 paginationRequired: 'Diese Funktion erfordert den paginierten Modus',
-                noPages: 'Keine Seiten zum Exportieren verfugbar'
+                noPages: 'Keine Seiten zum Exportieren verfügbar'
             },
             projectPackage: {
                 rasterFallbackUnavailable: 'Die Rasterseitendaten, die zur vollständigen Erhaltung des Projektinhalts erforderlich sind, sind nicht verfügbar.'
