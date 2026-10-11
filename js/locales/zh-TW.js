@@ -359,6 +359,7 @@ window.translations = {
         deletePage: '刪除當前頁',
         deletePageConfirmTitle: '刪除頁面',
         deletePageConfirm: '確定刪除當前頁嗎？此操作不可撤銷。',
+        duplicatePage: '複製當前頁',
         of: ' / ',
         newPage: '新建頁面'
     },

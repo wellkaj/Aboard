@@ -1,3 +1,14 @@
+// The lesson stopwatch measures elapsed time, so it must read a monotonic
+// clock: classroom all-in-one panels NTP-sync mid-lesson and the wall clock
+// snaps, which would inflate or rewind the accumulated time. performance
+// .now() is monotonic; Date.now() is only the fallback for environments
+// without the Performance API.
+function getMonotonicTimestamp() {
+    return typeof performance !== 'undefined' && typeof performance.now === 'function'
+        ? performance.now()
+        : Date.now();
+}
+
 class ClassroomModeManager {
     constructor(board) {
         this.board = board;
@@ -718,7 +729,7 @@ class ClassroomModeManager {
         }
 
         this.isTimerRunning = true;
-        this.runStartTimestamp = Date.now();
+        this.runStartTimestamp = getMonotonicTimestamp();
         this.timerInterval = setInterval(() => {
             this.syncElapsedFromClock();
             this.updateTimerDisplay();
@@ -732,7 +743,7 @@ class ClassroomModeManager {
             return;
         }
 
-        this.accumulatedMs += Math.max(0, Date.now() - this.runStartTimestamp);
+        this.accumulatedMs += Math.max(0, getMonotonicTimestamp() - this.runStartTimestamp);
         this.runStartTimestamp = 0;
         this.isTimerRunning = false;
         clearInterval(this.timerInterval);
@@ -743,7 +754,7 @@ class ClassroomModeManager {
 
     resetTimer() {
         this.accumulatedMs = 0;
-        this.runStartTimestamp = this.isTimerRunning ? Date.now() : 0;
+        this.runStartTimestamp = this.isTimerRunning ? getMonotonicTimestamp() : 0;
         this.elapsedSeconds = 0;
         this.updateTimerDisplay();
     }
@@ -751,7 +762,7 @@ class ClassroomModeManager {
     syncElapsedFromClock() {
         let totalMs = this.accumulatedMs;
         if (this.isTimerRunning && this.runStartTimestamp) {
-            totalMs += Math.max(0, Date.now() - this.runStartTimestamp);
+            totalMs += Math.max(0, getMonotonicTimestamp() - this.runStartTimestamp);
         }
         this.elapsedSeconds = Math.floor(totalMs / 1000);
     }

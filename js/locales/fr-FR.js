@@ -343,6 +343,7 @@ window.translations = {
         deletePage: 'Supprimer la page actuelle',
         deletePageConfirmTitle: 'Supprimer la page',
         deletePageConfirm: 'Supprimer la page actuelle ? Cette action est irréversible.',
+        duplicatePage: 'Dupliquer la page actuelle',
         of: ' / ',
         newPage: 'Nouvelle page'
     },

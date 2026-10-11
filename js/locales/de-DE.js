@@ -345,6 +345,7 @@ window.translations = {
         deletePage: 'Aktuelle Seite löschen',
         deletePageConfirmTitle: 'Seite löschen',
         deletePageConfirm: 'Aktuelle Seite löschen? Dies kann nicht rückgängig gemacht werden.',
+        duplicatePage: 'Aktuelle Seite duplizieren',
         of: ' / ',
         newPage: 'Neue Seite'
     },

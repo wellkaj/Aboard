@@ -1222,6 +1222,9 @@ class DrawingBoard {
     deletePage(pageNumber) {
         return paginationRuntime.deletePage?.(this, pageNumber);
     }
+    duplicatePage(pageNumber) {
+        return paginationRuntime.duplicatePage?.(this, pageNumber);
+    }
     goToPage(pageNumber, options) {
         return paginationRuntime.goToPage?.(this, pageNumber, options);
     }

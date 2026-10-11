@@ -363,6 +363,7 @@ window.translations = {
         deletePage: '删除当前页',
         deletePageConfirmTitle: '删除页面',
         deletePageConfirm: '确定删除当前页吗？此操作不可撤销。',
+        duplicatePage: '复制当前页',
         of: ' / ',
         newPage: '新建页面'
     },

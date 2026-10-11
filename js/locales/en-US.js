@@ -363,6 +363,7 @@ window.translations = {
         deletePage: 'Delete current page',
         deletePageConfirmTitle: 'Delete Page',
         deletePageConfirm: 'Delete the current page? This cannot be undone.',
+        duplicatePage: 'Duplicate current page',
         of: ' / ',
         newPage: 'New Page'
     },

@@ -347,6 +347,7 @@ window.translations = {
         deletePage: '現在のページを削除',
         deletePageConfirmTitle: 'ページを削除',
         deletePageConfirm: '現在のページを削除しますか？この操作は元に戻せません。',
+        duplicatePage: '現在のページを複製',
         of: ' / ',
         newPage: '新しいページ'
     },

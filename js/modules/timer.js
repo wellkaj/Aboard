@@ -10,6 +10,18 @@ function getTimerText(key, fallback) {
     return translated && translated !== key ? translated : fallback;
 }
 
+// Elapsed-time math must survive system-clock corrections: classroom
+// all-in-one panels NTP-sync mid-lesson and the wall clock snaps, which
+// would corrupt every running timer (a backwards snap rewinds a stopwatch
+// and lengthens a countdown; a forwards snap finishes it instantly).
+// performance.now() is monotonic; Date.now() is only the fallback for
+// environments without the Performance API.
+function getTimerMonotonicTimestamp() {
+    return typeof performance !== 'undefined' && typeof performance.now === 'function'
+        ? performance.now()
+        : Date.now();
+}
+
 function isQuotaExceededError(error) {
     if (!error) {
         return false;
@@ -599,7 +611,7 @@ class TimerInstance {
     startTimerLoop() {
         this.isRunning = true;
         this.isPaused = false;
-        this.startTime = Date.now();
+        this.startTime = getTimerMonotonicTimestamp();
 
         // For stopwatch mode, if there's an initial duration, it means we start from that time
         // For countdown mode, we already have remainingTime set
@@ -619,14 +631,14 @@ class TimerInstance {
     
     updateTimer() {
         if (this.mode === 'stopwatch') {
-            const now = Date.now();
+            const now = getTimerMonotonicTimestamp();
             const delta = now - this.startTime;
             this.elapsedTime += delta;
             this.startTime = now;
-            
+
             this.displayTime(this.elapsedTime);
         } else if (this.mode === 'countdown') {
-            const now = Date.now();
+            const now = getTimerMonotonicTimestamp();
             const delta = now - this.startTime;
             this.remainingTime -= delta;
             this.startTime = now;
@@ -682,7 +694,7 @@ class TimerInstance {
             // treat a reset-then-continued timer the same as a fresh one.
             this.isRunning = true;
             this.isPaused = false;
-            this.startTime = Date.now();
+            this.startTime = getTimerMonotonicTimestamp();
             if (this.intervalId) {
                 clearInterval(this.intervalId);
                 this.intervalId = null;

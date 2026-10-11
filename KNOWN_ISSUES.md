@@ -1,6 +1,6 @@
 # 已知问题与审查归档
 
-最后核验：2026-09-27
+最后核验：2026-10-11
 
 ## 当前状态
 
@@ -12,10 +12,29 @@
 - 已覆盖 360x640 到 3840x2160 的响应式布局，但没有执行持续整节课时长的 300 页内存压力测试。
 - 多标签页自动保存冲突由 Web Locks 防护；不支持 Web Locks 的旧浏览器会退化为单标签使用假设，并在控制台记录兼容性信息。
 - 公告内容目前由 `js/features/announcement/announcement-manager.js` 内的本地化资源管理，不存在独立的远程公告配置源。
-- 删除页面不进撤销历史（与新建页面一致，分页操作均不可撤销）；删除前有一次确认弹窗。
+- 删除页面不进撤销历史（与新建页面一致，分页操作均不可撤销）；删除前有一次确认弹窗。复制页面同样不进撤销历史（非破坏性操作，无需确认，删除副本即等效撤销）。
+- 计时器（秒表/倒计时/课堂模式计时）在刷新后不恢复：计时器是授课过程中的临时悬浮件，与 GIF 悬浮层不同，未纳入会话持久化。
 - GIF 悬浮层的 IndexedDB 状态没有跨标签页同步：A 标签删除 GIF 后，B 标签的下一次保存会按 last-write-wins 把它写回（旧 localStorage 路径同样没有同步，非回归）。
 
 发现新问题时，应先添加最小复现测试，再在本文件的”当前状态”下记录适用环境、复现步骤和影响范围。
+
+## 2026-10-11 审计归档（计时器单调时钟专项 + 复制页面）
+
+例行维护轮：深读复核了 2026-09-27 引入的删除页面功能（页号键控状态搬运、上限守卫、UI 同步、确认弹窗与 8 语言键，未发现缺陷），并重跑了自动一致性检查（sw.js 预缓存 79+17 与磁盘/版本一致、index.html 333 个 i18n 引用全部有键、8 语言键齐平——德/西/法/日/韩约 100 键走 en-US fallback 属既有设计）。专项深读了此前仅定向扫描的 timer.js 全文与 classroom-mode 计时器，先写失败测试再修复 1 项缺陷，并新增复制页面功能。
+
+### 提交一：计时器墙钟依赖（fix）
+
+| 范围 | 问题 | 回归测试 |
+| --- | --- | --- |
+| timer.js + classroom-mode.js | 全部 elapsed 计时基于 `Date.now()` 墙钟差值（`updateTimer`、`startTimerLoop`、暂停恢复、课堂秒表的 `syncElapsedFromClock`/`pauseTimer`）。教室一体机课中 NTP 对时会让墙钟跳变：倒跳使秒表倒退、倒计时凭空加时；正跳使倒计时瞬间归零、课堂计时器虚增（`Math.max(0,…)` 只挡住了倒退方向）。全部改经 `performance.now()` 单调时钟（无 Performance API 环境回退 `Date.now()`），双方向跳变下计时只消耗真实流逝时间 | `timer-monotonic-clock.test.js` |
+
+### 提交二：复制当前页（feat）
+
+分页此前只能新建（空白）与删除，做“变式练习页/重做页”只能从空白页重建。分页条新增“复制当前页”按钮（复制图标，位于删除按钮左侧，达 300 页上限禁用，无需确认——非破坏性、删除副本即撤销）：`duplicatePage` 先固化当前页快照（位图/场景/背景/教具），在当前页之后插入副本并把所有页号键控结构上移一位（`shiftPageIndexedStateAfterInsertion`，pageBackgrounds 及其持久化、pageScenes、`shiftPageToolStatesAfterInsertion`、raster fallback 三件套、快照访问序），副本继承源页条目：背景条目深克隆（池指纹引用不受影响）、场景经 `capturePageScene` 活捕全新对象（保留贴图 imageElement 引用、无跨页别名）、位图快照共享引用（槽位整存整取、从不就地修改）、教具逐条克隆、raster fallback 基底共享引用；副本成为当前页并经 `loadPage` 装载。仅支持复制当前页（场景活捕读的是当前画布）。与新建/删除一致不进撤销历史。新增 `page.duplicatePage` i18n 键 8 语言同步。回归测试 `pagination-duplicate-page.test.js`。
+
+同轮记录、未改动的事项：德/西/法/日/韩 locale 相对 zh-CN 各缺约 100 键（fallback 链兜底显示英文，属翻译完备度而非缺陷）；计时器不随会话持久化恢复（临时教具定位，已记入“当前状态”）。
+
+本轮验证基线：core 66 项、full 113 项（含真实 Chromium 绘图冒烟与 8 视口响应式检查）、静态发布构建。版本 2.5.6 → 2.5.7（version.txt 同步至 package.json、package-lock.json、manifest.json 图标 URL、index.html manifest 链接、sw.js SW_VERSION 与 CORE_ASSETS 图标条目、README 徽章）。
 
 ## 2026-09-27 审计归档（跨页教具复核 + GIF 存储专项 + UI 静默失败）
 

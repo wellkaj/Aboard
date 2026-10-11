@@ -1917,6 +1917,45 @@ class TeachingToolsManager {
         this.persistPageToolStates();
     }
 
+    // Page insertion renumbers later pages upward; tool snapshots follow so a
+    // page keeps its tools at its new number, and the insertion slot starts
+    // empty for the caller to fill.
+    shiftPageToolStatesAfterInsertion(insertedPageNumber) {
+        const inserted = Number(insertedPageNumber);
+        if (!Number.isInteger(inserted)) {
+            return;
+        }
+        const shifted = {};
+        Object.entries(this.pageToolStates || {}).forEach(([key, entries]) => {
+            const pageNumber = Number(key);
+            if (!Number.isInteger(pageNumber)) {
+                shifted[key] = entries;
+                return;
+            }
+            shifted[pageNumber >= inserted ? pageNumber + 1 : pageNumber] = entries;
+        });
+        this.pageToolStates = shifted;
+        this.persistPageToolStates();
+    }
+
+    // Page duplication copies the source page's tool snapshot onto the target
+    // page. Entries are cloned so later edits on either page (drag, resize,
+    // delete) cannot leak into the other.
+    duplicatePageToolStates(fromPageNumber, toPageNumber) {
+        const from = Number(fromPageNumber);
+        const to = Number(toPageNumber);
+        if (!Number.isInteger(from) || !Number.isInteger(to) || from === to) {
+            return false;
+        }
+        const source = this.pageToolStates?.[String(from)];
+        if (!Array.isArray(source)) {
+            return false;
+        }
+        this.pageToolStates[String(to)] = source.map((entry) => ({ ...entry }));
+        this.persistPageToolStates();
+        return true;
+    }
+
     // Clean up when destroyed
     destroy() {
         // Remove event listeners

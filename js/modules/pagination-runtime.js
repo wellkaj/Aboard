@@ -517,6 +517,133 @@ function deletePage(pageNumber) {
         return true;
 }
 
+// Inserting a page shifts every page-number-keyed structure at/after the
+// insertion point UP one so later pages keep their content under their new
+// numbers — the mirror of shiftPageIndexedStateAfterDeletion. The insertion
+// slot itself is left empty for the caller to fill.
+function shiftPageIndexedStateAfterInsertion(insertedPageNumber) {
+        const shiftRecordMap = (map) => {
+            if (!map || typeof map !== 'object') {
+                return;
+            }
+            const shifted = {};
+            Object.keys(map).forEach((key) => {
+                const pageNumber = Number(key);
+                if (!Number.isInteger(pageNumber)) {
+                    shifted[key] = map[key];
+                    return;
+                }
+                shifted[pageNumber >= insertedPageNumber ? pageNumber + 1 : pageNumber] = map[key];
+            });
+            Object.keys(map).forEach((key) => {
+                delete map[key];
+            });
+            Object.keys(shifted).forEach((key) => {
+                map[key] = shifted[key];
+            });
+        };
+
+        shiftRecordMap(this.pageBackgrounds);
+        persistPageBackgrounds.call(this);
+        this.teachingToolsManager?.shiftPageToolStatesAfterInsertion?.(insertedPageNumber);
+        shiftRecordMap(this.pageScenes);
+
+        if (this.pageRasterFallbackPages instanceof Set) {
+            const shiftedFallbacks = new Set();
+            this.pageRasterFallbackPages.forEach((pageNumber) => {
+                shiftedFallbacks.add(pageNumber >= insertedPageNumber ? pageNumber + 1 : pageNumber);
+            });
+            this.pageRasterFallbackPages = shiftedFallbacks;
+        }
+        const shiftNumberKeyedMap = (map) => {
+            if (!(map instanceof Map)) {
+                return;
+            }
+            const shifted = new Map();
+            map.forEach((value, pageNumber) => {
+                shifted.set(pageNumber >= insertedPageNumber ? pageNumber + 1 : pageNumber, value);
+            });
+            map.clear();
+            shifted.forEach((value, pageNumber) => {
+                map.set(pageNumber, value);
+            });
+        };
+        shiftNumberKeyedMap(this.pageRasterFallbackBases);
+        shiftNumberKeyedMap(this.pageRasterFallbackScaledBases);
+        shiftNumberKeyedMap(this.pageSnapshotAccessOrder);
+}
+
+// Duplicate the CURRENT page: an identical copy is inserted directly after
+// it and becomes the current page, ready to be reworked (variant exercises,
+// retry pages). Only the current page can be duplicated — the copy's scene
+// is captured from the live canvas. Like creation and deletion, duplication
+// does not enter undo history; delete the copy to undo it.
+function duplicatePage(pageNumber) {
+        if (!Array.isArray(this.pages) || this.pages.length === 0) {
+            return false;
+        }
+        const source = normalizePageNumber(pageNumber, this.currentPage);
+        if (!Number.isInteger(source) || source < 1 || source > this.pages.length) {
+            return false;
+        }
+        if (source !== this.currentPage) {
+            return false;
+        }
+        if (this.pages.length >= MAX_PAGES) {
+            console.warn(`Cannot duplicate page: maximum of ${MAX_PAGES} pages reached.`);
+            this.updatePaginationUI();
+            return false;
+        }
+        // Finalize the live page first so its bitmap, scene, background and
+        // tool snapshots are current, then capture fresh (non-aliased) copies
+        // of the entries the duplicate will inherit.
+        saveCurrentPageSnapshot.call(this);
+        const target = source + 1;
+
+        const sourceBackground = this.pageBackgrounds?.[source];
+        const clonedBackground = sourceBackground !== undefined ? cloneSerializable(sourceBackground) : undefined;
+        // Prefer a live capture (fresh objects, image elements kept); fall
+        // back to cloning the stored entry when the scene runtime is absent.
+        const clonedScene = window.AboardPageSceneRuntime?.capturePageScene?.(this, source)
+            || (() => {
+                const stored = this.pageScenes?.[String(source)];
+                if (!stored) {
+                    return null;
+                }
+                const cloned = cloneSerializable(stored);
+                cloned.pageNumber = target;
+                return cloned;
+            })();
+        const sourceFallbackTracked = this.pageRasterFallbackPages instanceof Set
+            && this.pageRasterFallbackPages.has(source);
+        const sourceFallbackBase = sourceFallbackTracked && this.pageRasterFallbackBases instanceof Map
+            ? this.pageRasterFallbackBases.get(source)
+            : null;
+
+        // The inserted slot shares the source's snapshot reference: page
+        // slots are replaced wholesale on every save, never mutated, so the
+        // two pages cannot corrupt each other.
+        this.pages.splice(target - 1, 0, this.pages[source - 1] ?? null);
+        shiftPageIndexedStateAfterInsertion.call(this, target);
+
+        if (clonedBackground !== undefined) {
+            this.pageBackgrounds[target] = clonedBackground;
+        }
+        if (clonedScene) {
+            this.pageScenes[String(target)] = clonedScene;
+        }
+        if (sourceFallbackTracked && sourceFallbackBase) {
+            this.pageRasterFallbackPages.add(target);
+            this.pageRasterFallbackBases.set(target, sourceFallbackBase);
+        }
+        this.teachingToolsManager?.duplicatePageToolStates?.(source, target);
+
+        this.currentPage = target;
+        this.loadPage(this.currentPage);
+        this.updatePaginationUI();
+        return true;
+}
+
 function resetTransientBackgroundMediaState(backgroundManager) {
         if (!backgroundManager || typeof backgroundManager !== 'object') {
             return;
@@ -879,6 +1006,12 @@ function updatePaginationUI() {
         if (deletePageBtn) {
             deletePageBtn.disabled = this.pages.length <= 1;
         }
+
+        // Duplicating past the 300-page cap is refused; reflect it up front.
+        const duplicatePageBtn = document.getElementById('duplicate-page-btn');
+        if (duplicatePageBtn) {
+            duplicatePageBtn.disabled = this.pages.length >= MAX_PAGES;
+        }
         
         // Update button icon and title based on whether we're on the last page
         // Also show "+" icon when there's only one page total
@@ -928,6 +1061,9 @@ window.AboardPaginationRuntime = {
     },
     deletePage(board, pageNumber) {
         return deletePage.call(board, pageNumber);
+    },
+    duplicatePage(board, pageNumber) {
+        return duplicatePage.call(board, pageNumber);
     },
     goToPage(board, pageNumber, options) {
         return goToPage.call(board, pageNumber, options);

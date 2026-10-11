@@ -761,6 +761,11 @@ function setupEventListeners() {
         const pageInput = document.getElementById('page-input');
         bindIfPresent(document.getElementById('prev-page-btn'), 'click', () => this.prevPage());
         bindIfPresent(document.getElementById('next-or-add-page-btn'), 'click', () => this.nextOrAddPage());
+        bindIfPresent(document.getElementById('duplicate-page-btn'), 'click', () => {
+            // Non-destructive and instantly reversible via the delete button,
+            // so no confirmation is needed.
+            this.duplicatePage(this.currentPage);
+        });
         bindIfPresent(document.getElementById('delete-page-btn'), 'click', async () => {
             // Deleting is irreversible (page deletion never enters undo history,
             // same as page creation), so confirm once with the page number.
